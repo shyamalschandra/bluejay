@@ -29,6 +29,9 @@ class Scan: Queueable {
     
     /// If allowDuplicates is true, the scan will repeatedly discover the same device as long as its advertisement is picked up. This is a Core Bluetooth option, and it does consume more battery, doesn't work in the background, and is often advised to turn off.
     private let allowDuplicates: Bool
+
+    /// If set to true, will not update discoveries when the difference in RSSI since the last update is less than 5 dBm.
+    private let throttleInsignificantDiscoveries: Bool
     
     /// The scan will only look for peripherals broadcasting the specified services.
     private let serviceIdentifiers: [ServiceIdentifier]?
@@ -53,6 +56,7 @@ class Scan: Queueable {
     
     init(duration: TimeInterval,
          allowDuplicates: Bool,
+         throttleInsignificantDiscoveries: Bool = true,
          serviceIdentifiers: [ServiceIdentifier]?,
          discovery: @escaping (ScanDiscovery, [ScanDiscovery]) -> ScanAction,
          expired: ((ScanDiscovery, [ScanDiscovery]) -> ScanAction)?,
@@ -62,6 +66,7 @@ class Scan: Queueable {
         self.state = .notStarted
         
         self.duration = duration
+        self.throttleInsignificantDiscoveries = throttleInsignificantDiscoveries
         self.allowDuplicates = allowDuplicates
         self.serviceIdentifiers = serviceIdentifiers
         self.discovery = discovery
@@ -152,7 +157,7 @@ class Scan: Queueable {
                 let existingDiscovery = discoveries[indexOfExistingDiscovery]
                 
                 // Throttle discovery by ignoring discovery if the change of RSSI is insignificant.
-                if abs(existingDiscovery.rssi - rssi.intValue) < 5 {
+                if throttleInsignificantDiscoveries && abs(existingDiscovery.rssi - rssi.intValue) < 5 {
                     return
                 }
                 
