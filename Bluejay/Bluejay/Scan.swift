@@ -56,7 +56,7 @@ class Scan: Queueable {
     
     init(duration: TimeInterval,
          allowDuplicates: Bool,
-         throttleInsignificantDiscoveries: Bool = true,
+         throttleInsignificantDiscoveries: Bool,
          serviceIdentifiers: [ServiceIdentifier]?,
          discovery: @escaping (ScanDiscovery, [ScanDiscovery]) -> ScanAction,
          expired: ((ScanDiscovery, [ScanDiscovery]) -> ScanAction)?,
