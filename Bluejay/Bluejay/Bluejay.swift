@@ -326,8 +326,8 @@ public class Bluejay: NSObject {
      */
     public func scan(
         duration: TimeInterval = 0,
-        throttleInsignificantDiscoveries: Bool = true,
         allowDuplicates: Bool = false,
+        throttleInsignificantDiscoveries: Bool = true,
         serviceIdentifiers: [ServiceIdentifier]?,
         discovery: @escaping (ScanDiscovery, [ScanDiscovery]) -> ScanAction,
         expired: ((ScanDiscovery, [ScanDiscovery]) -> ScanAction)? = nil,
